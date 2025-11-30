@@ -1,25 +1,26 @@
 import streamlit as st
-import joblib
+import pickle
 import numpy as np
 
 # Load model
-model = joblib.load("model.pkl")
+model = pickle.load(open("model.pkl", "rb"))
 
-st.title("Air Quality Predictor (NO2 Level)")
-st.subheader("Enter environmental conditions:")
+# App UI
+st.title("Air Quality Prediction App 🌍")
+st.write("Enter environmental conditions to predict NO2 levels:")
 
-# Input form
-temperature = st.number_input("Temperature (T)", min_value=-50.0, max_value=50.0, step=0.1)
-humidity = st.number_input("Relative Humidity (RH)", min_value=0.0, max_value=100.0, step=0.1)
-absolute_humidity = st.number_input("Absolute Humidity (AH)", min_value=0.0, max_value=10.0, step=0.01)
+# Input fields
+T = st.number_input("Temperature (T)", value=20.0)
+RH = st.number_input("Relative Humidity (RH)", value=50.0)
+AH = st.number_input("Absolute Humidity (AH)", value=0.7)
 
-if st.button("Predict NO2 Level"):
-    try:
-        # Prepare input in the same shape model was trained on
-        features = np.array([[temperature, humidity, absolute_humidity]])
+# Predict Button
+if st.button("Predict"):
+    # Convert inputs to numpy array
+    input_data = np.array([[T, RH, AH]])
 
-        prediction = model.predict(features)[0]
-        st.success(f"Predicted NO₂ Level: {prediction:.2f} µg/m³")
+    # Run prediction
+    prediction = model.predict(input_data)
 
-    except Exception as e:
-        st.error(f"Error: {e}")
+    # Display result
+    st.success(f"Predicted NO2 Level: {prediction[0]:.2f}")
