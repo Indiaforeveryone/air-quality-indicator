@@ -1,4 +1,3 @@
-import streamlit as st
 import pickle
 import numpy as np
 
@@ -24,3 +23,4 @@ if st.button("Predict"):
 
     # Display result
     st.success(f"Predicted NO2 Level: {prediction[0]:.2f}")
+
