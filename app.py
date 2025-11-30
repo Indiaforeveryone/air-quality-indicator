@@ -1,18 +1,25 @@
 import streamlit as st
-import numpy as np
 import joblib
+import numpy as np
 
+# Load model
 model = joblib.load("model.pkl")
 
-st.title("Air Quality Prediction 🚦")
-st.write("Enter environmental values to predict NO2 levels:")
+st.title("Air Quality Predictor (NO2 Level)")
+st.subheader("Enter environmental conditions:")
 
-T = st.number_input("Temperature (°C)", min_value=-20.0, max_value=60.0, value=20.0)
-RH = st.number_input("Humidity (%)", min_value=0.0, max_value=100.0, value=50.0)
-AH = st.number_input("Absolute Humidity", min_value=0.0, max_value=5.0, value=1.0)
+# Input form
+temperature = st.number_input("Temperature (T)", min_value=-50.0, max_value=50.0, step=0.1)
+humidity = st.number_input("Relative Humidity (RH)", min_value=0.0, max_value=100.0, step=0.1)
+absolute_humidity = st.number_input("Absolute Humidity (AH)", min_value=0.0, max_value=10.0, step=0.01)
 
-input_data = np.array([[T, RH, AH]])
+if st.button("Predict NO2 Level"):
+    try:
+        # Prepare input in the same shape model was trained on
+        features = np.array([[temperature, humidity, absolute_humidity]])
 
-if st.button("Predict"):
-    prediction = model.predict(input_data)
-    st.success(f"Predicted NO2 Level: {prediction[0]:.2f}")
+        prediction = model.predict(features)[0]
+        st.success(f"Predicted NO₂ Level: {prediction:.2f} µg/m³")
+
+    except Exception as e:
+        st.error(f"Error: {e}")
